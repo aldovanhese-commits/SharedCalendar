@@ -3,94 +3,106 @@
     --card-bg: #ffffff;
     --text-color: #1d1d1f;
     --primary-color: #0071e3;
-    --color-p1: #34c759; /* Groen voor jou */
-    --color-p2: #ff2d55; /* Roze/Rood voor haar */
-    --color-samen: #5856d6; /* Paars voor samen */
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
+    overflow-x: hidden;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 15px 20px;
     background: var(--card-bg);
     border-bottom: 1px solid #d2d2d7;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    position: sticky; top: 0; z-index: 10;
 }
 
 header button {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: var(--primary-color);
+    background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--primary-color);
 }
 
-.week-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-}
+.week-grid { display: flex; flex-direction: column; gap: 12px; padding: 15px; }
 
 .day-card {
     background: var(--card-bg);
     border-radius: 12px;
     padding: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: transform 0.1s;
 }
+.day-card:active { transform: scale(0.98); }
 
 .day-title {
-    font-weight: bold;
-    border-bottom: 1px solid #e5e5ea;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    text-transform: capitalize;
+    font-weight: 600; font-size: 1.05rem; border-bottom: 1px solid #e5e5ea;
+    padding-bottom: 6px; margin-bottom: 8px; text-transform: capitalize;
 }
 
 .event {
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    color: white;
-    font-size: 0.9rem;
-    display: flex;
-    justify-content: space-between;
+    padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
+    color: white; font-size: 0.9rem; display: flex; justify-content: space-between;
+    font-weight: 500;
 }
 
-.event.persoon-1 { background-color: var(--color-p1); }
-.event.persoon-2 { background-color: var(--color-p2); }
-.event.samen { background-color: var(--color-samen); }
+/* Modal Geoptimaliseerd voor iOS */
+.modal {
+    display: none; position: fixed; z-index: 100; left: 0; top: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
 
-/* Floating Action Button */
+.modal-content {
+    background: white; margin: 10% auto; padding: 20px;
+    width: 90%; max-width: 400px; border-radius: 16px;
+    box-sizing: border-box; position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
+.close { position: absolute; right: 16px; top: 12px; font-size: 24px; cursor: pointer; color: #8e8e93; }
+
+/* Formulier Elementen */
+.input-group {
+    display: flex; flex-direction: column; margin-bottom: 12px;
+}
+.input-group label {
+    font-size: 0.85rem; font-weight: 600; color: #8e8e93; margin-bottom: 4px;
+}
+form input[type="text"], form input[type="date"], form input[type="time"], form select {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 1px solid #c7c7cc; background: #f2f2f7;
+    font-size: 1rem; box-sizing: border-box; -webkit-appearance: none;
+}
+.time-row { display: flex; gap: 10px; }
+.time-row .input-group { flex: 1; }
+
+.btn-submit {
+    width: 100%; padding: 14px; background: var(--primary-color);
+    color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; margin-top: 10px;
+}
+
+/* Settings List */
+.color-picker-wrapper { display: flex; align-items: center; gap: 15px; margin: 10px 0; }
+.user-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; border-bottom: 1px solid #e5e5ea;
+}
+.user-badge { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.color-dot { width: 16px; height: 16px; border-radius: 50%; }
+.btn-delete { background: none; border: none; color: #ff3b30; font-size: 0.9rem; }
+
+/* Detail scherm items */
+.detail-event-item {
+    padding: 12px; border-radius: 10px; margin-bottom: 8px; color: white;
+}
+
 .fab {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    font-size: 2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    cursor: pointer;
+    position: fixed; bottom: 30px; right: 25px; background: var(--primary-color);
+    color: white; border: none; width: 56px; height: 56px; border-radius: 50%;
+    font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 50;
 }
-
-/* Modal Styling */
-.modal { display: none; position: fixed; z-index: 20; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); }
-.modal-content { background: white; margin: 20% auto; padding: 20px; width: 80%; border-radius: 14px; }
-.close { float: right; font-size: 28px; cursor: pointer; }
-form input, form select, form button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-form button { background: var(--primary-color); color: white; border: none; font-weight: bold; }
