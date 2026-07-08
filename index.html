@@ -2,11 +2,10 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Onze Kalender</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <!-- Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kalender">
@@ -18,43 +17,83 @@
         <button id="prevWeek">◀</button>
         <h1 id="weekTitle">Week Overzicht</h1>
         <button id="nextWeek">▶</button>
+        <button id="openSettingsBtn">⚙️</button>
     </header>
 
     <main>
-        <!-- Week overzicht container -->
+        <!-- Week overzicht -->
         <div id="weekContainer" class="week-grid"></div>
 
-        <!-- Knop om formulier te openen -->
+        <!-- FAB Knop om activiteit toe te voegen -->
         <button id="openModalBtn" class="fab">+</button>
 
-        <!-- Modal voor nieuw evenement -->
+        <!-- MODAL: Nieuwe activiteit (Geoptimaliseerd tegen overlappen) -->
         <div id="eventModal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" id="closeEventModal">&times;</span>
                 <h2>Nieuwe activiteit</h2>
                 <form id="eventForm">
-                    <input type="text" id="eventTitle" placeholder="Wat gaan we doen?" required>
-                    <input type="date" id="eventDate" required>
-                    <input type="time" id="eventTime" required>
-                    <select id="eventUser" required>
-                        <option value="">Wie?</option>
-                        <option value="Persoon 1">Ik</option>
-                        <option value="Persoon 2">Mijn Vriendin</option>
-                        <option value="Samen">Samen ❤️</option>
-                    </select>
-                    <button type="submit">Toevoegen</button>
+                    <div class="input-group">
+                        <label>Wat gaan we doen?</label>
+                        <input type="text" id="eventTitle" placeholder="Bv. Gaan eten, Cinema..." required>
+                    </div>
+                    <div class="input-group">
+                        <label>Datum</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="time-row">
+                        <div class="input-group">
+                            <label>Van</label>
+                            <input type="time" id="eventStartTime" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Tot</label>
+                            <input type="time" id="eventEndTime" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Wie?</label>
+                        <select id="eventUser" required>
+                            <!-- Wordt dynamisch ingeladen -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit">Toevoegen</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- MODAL: Dagplanning Detail -->
+        <div id="dayDetailModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeDetailModal">&times;</span>
+                <h2 id="detailDayTitle">Dagplanning</h2>
+                <div id="dayEventsList"></div>
+            </div>
+        </div>
+
+        <!-- MODAL: Instellingen (Gebruikers & Kleuren) -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeSettingsModal">&times;</span>
+                <h2>Beheer Personen</h2>
+                <form id="userForm">
+                    <input type="text" id="newUserName" placeholder="Naam (bv. Marie, Thomas)" required>
+                    <div class="color-picker-wrapper">
+                        <label>Kies een kleur:</label>
+                        <input type="color" id="newUserColor" value="#0071e3">
+                    </div>
+                    <button type="submit" class="btn-submit">Persoon Toevoegen</button>
+                </form>
+                <h3>Huidige personen:</h3>
+                <div id="usersList"></div>
             </div>
         </div>
     </main>
 
-    <!-- Firebase SDKs (v10+) -->
     <script type="module" src="app.js"></script>
     <script>
-        // Registreer de Service Worker voor PWA functionaliteit
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("Service Worker Geregistreerd"));
+            navigator.serviceWorker.register('sw.js').then(() => console.log("SW OK"));
         }
     </script>
 </body>
