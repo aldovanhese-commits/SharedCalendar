@@ -21,13 +21,10 @@
     </header>
 
     <main>
-        <!-- Week overzicht -->
         <div id="weekContainer" class="week-grid"></div>
 
-        <!-- FAB Knop om activiteit toe te voegen -->
         <button id="openModalBtn" class="fab">+</button>
 
-        <!-- MODAL: Nieuwe activiteit (Geoptimaliseerd tegen overlappen) -->
         <div id="eventModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeEventModal">&times;</span>
@@ -54,24 +51,54 @@
                     <div class="input-group">
                         <label>Wie?</label>
                         <select id="eventUser" required>
-                            <!-- Wordt dynamisch ingeladen -->
-                        </select>
+                            </select>
                     </div>
                     <button type="submit" class="btn-submit">Toevoegen</button>
                 </form>
             </div>
         </div>
 
-        <!-- MODAL: Dagplanning Detail -->
         <div id="dayDetailModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeDetailModal">&times;</span>
                 <h2 id="detailDayTitle">Dagplanning</h2>
+                
                 <div id="dayEventsList"></div>
+
+                <div id="editEventSection" style="display: none; border-top: 2px solid #e5e5ea; margin-top: 15px; padding-top: 15px;">
+                    <h3>Activiteit aanpassen</h3>
+                    <form id="editEventForm">
+                        <input type="hidden" id="editEventId">
+                        <div class="input-group">
+                            <label>Wat gaan we doen?</label>
+                            <input type="text" id="editEventTitle" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Datum</label>
+                            <input type="date" id="editEventDate" required>
+                        </div>
+                        <div class="time-row">
+                            <div class="input-group">
+                                <label>Van</label>
+                                <input type="time" id="editEventStartTime" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Tot</label>
+                                <input type="time" id="editEventEndTime" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Wie?</label>
+                            <select id="editEventUser" required>
+                                </select>
+                        </div>
+                        <button type="submit" class="btn-submit">Wijzigingen Opslaan</button>
+                        <button type="button" id="btnDeleteEvent" class="btn-delete-action">Verwijder Activiteit</button>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <!-- MODAL: Instellingen (Gebruikers & Kleuren) -->
         <div id="settingsModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeSettingsModal">&times;</span>
