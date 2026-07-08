@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onze Kalender</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kalender">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+
+    <header>
+        <button id="prevWeek">◀</button>
+        <h1 id="weekTitle">Week Overzicht</h1>
+        <button id="nextWeek">▶</button>
+    </header>
+
+    <main>
+        <!-- Week overzicht container -->
+        <div id="weekContainer" class="week-grid"></div>
+
+        <!-- Knop om formulier te openen -->
+        <button id="openModalBtn" class="fab">+</button>
+
+        <!-- Modal voor nieuw evenement -->
+        <div id="eventModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Nieuwe activiteit</h2>
+                <form id="eventForm">
+                    <input type="text" id="eventTitle" placeholder="Wat gaan we doen?" required>
+                    <input type="date" id="eventDate" required>
+                    <input type="time" id="eventTime" required>
+                    <select id="eventUser" required>
+                        <option value="">Wie?</option>
+                        <option value="Persoon 1">Ik</option>
+                        <option value="Persoon 2">Mijn Vriendin</option>
+                        <option value="Samen">Samen ❤️</option>
+                    </select>
+                    <button type="submit">Toevoegen</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs (v10+) -->
+    <script type="module" src="app.js"></script>
+    <script>
+        // Registreer de Service Worker voor PWA functionaliteit
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker Geregistreerd"));
+        }
+    </script>
+</body>
+</html>
