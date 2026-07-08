@@ -106,3 +106,18 @@ form input[type="text"], form input[type="date"], form input[type="time"], form 
     color: white; border: none; width: 56px; height: 56px; border-radius: 50%;
     font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 50;
 }
+
+/* Extra styling voor bewerken en verwijderen */
+.detail-event-item {
+    padding: 12px; border-radius: 10px; margin-bottom: 8px; color: white;
+    cursor: pointer; position: relative; transition: opacity 0.1s;
+}
+.detail-event-item:active { opacity: 0.8; }
+.detail-event-item::after {
+    content: '✏️'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;
+}
+
+.btn-delete-action {
+    width: 100%; padding: 12px; background: #ff3b30; color: white;
+    border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; margin-top: 8px; cursor: pointer;
+}
