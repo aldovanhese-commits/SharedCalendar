@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // JOUW FIREBASE CONFIGURATIE (Zorg dat jouw ingevulde gegevens hier staan!)
 const firebaseConfig = {
@@ -31,23 +31,23 @@ const eventModal = document.getElementById('eventModal');
 const dayDetailModal = document.getElementById('dayDetailModal');
 const settingsModal = document.getElementById('settingsModal');
 
-// Realtime synchronisatie van Personen/Gebruikers
+// Realtime personen synchroniseren
 onSnapshot(collection(db, "users"), (snapshot) => {
     allUsers = [];
     eventUserSelect.innerHTML = '<option value="">Wie?</option>';
+    document.getElementById('editEventUser').innerHTML = '<option value="">Wie?</option>';
     usersListDiv.innerHTML = '';
     
     snapshot.forEach((doc) => {
         const userData = { id: doc.id, ...doc.data() };
         allUsers.push(userData);
 
-        // Voeg toe aan dropdown kiezer
-        const option = document.createElement('option');
-        option.value = userData.name;
-        option.innerText = userData.name;
-        eventUserSelect.appendChild(option);
+        const option1 = document.createElement('option'); option1.value = userData.name; option1.innerText = userData.name;
+        eventUserSelect.appendChild(option1);
+        
+        const option2 = document.createElement('option'); option2.value = userData.name; option2.innerText = userData.name;
+        document.getElementById('editEventUser').appendChild(option2);
 
-        // Voeg toe aan lijst in instellingen
         const userItem = document.createElement('div');
         userItem.className = 'user-item';
         userItem.innerHTML = `
@@ -60,17 +60,14 @@ onSnapshot(collection(db, "users"), (snapshot) => {
         usersListDiv.appendChild(userItem);
     });
 
-    // Eventlisteners voor verwijderknoppen personen
     document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.onclick = async (e) => {
-            await deleteDoc(doc(db, "users", e.target.dataset.id));
-        };
+        btn.onclick = async (e) => { await deleteDoc(doc(db, "users", e.target.dataset.id)); };
     });
 
     renderWeek();
 });
 
-// Realtime synchronisatie van Evenementen
+// Realtime evenementen synchroniseren
 const qEvents = query(collection(db, "events"), orderBy("startTime"));
 onSnapshot(qEvents, (snapshot) => {
     allEvents = [];
@@ -80,7 +77,6 @@ onSnapshot(qEvents, (snapshot) => {
     renderWeek();
 });
 
-// Helper: Bereken Maandag van de week
 function getStartOfWeek(d) {
     const date = new Date(d);
     const day = date.getDay();
@@ -88,7 +84,6 @@ function getStartOfWeek(d) {
     return new Date(date.setDate(diff));
 }
 
-// Render het weekoverzicht
 function renderWeek() {
     weekContainer.innerHTML = '';
     const options = { weekday: 'long', day: 'numeric', month: 'short' };
@@ -119,9 +114,8 @@ function renderWeek() {
             dayCard.appendChild(eventEl);
         });
 
-        // Klik-event om gedetailleerde dagplanning te openen
         const capturedDate = dateString;
-        const capturedTitle = tempDate.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', island: 'true' });
+        const capturedTitle = tempDate.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
         dayCard.addEventListener('click', () => openDayDetail(capturedDate, capturedTitle));
 
         weekContainer.appendChild(dayCard);
@@ -129,11 +123,13 @@ function renderWeek() {
     }
 }
 
-// Toon gedetailleerd dagscherm per persoon
+// Open Dagscherm
 function openDayDetail(dateString, fullDayTitle) {
     document.getElementById('detailDayTitle').innerText = fullDayTitle;
     const listDiv = document.getElementById('dayEventsList');
+    const editSection = document.getElementById('editEventSection');
     listDiv.innerHTML = '';
+    editSection.style.display = "none"; 
 
     const dayEvents = allEvents.filter(e => e.date === dateString);
 
@@ -152,13 +148,25 @@ function openDayDetail(dateString, fullDayTitle) {
                 <div style="font-weight:bold; font-size:1.1rem; margin:2px 0;">${e.startTime} - ${e.endTime}</div>
                 <div>${e.title}</div>
             `;
+            
+            div.onclick = () => {
+                document.getElementById('editEventId').value = e.id;
+                document.getElementById('editEventTitle').value = e.title;
+                document.getElementById('editEventDate').value = e.date;
+                document.getElementById('editEventStartTime').value = e.startTime;
+                document.getElementById('editEventEndTime').value = e.endTime;
+                document.getElementById('editEventUser').value = e.user;
+                editSection.style.display = "block";
+                editSection.scrollIntoView({ behavior: 'smooth' });
+            };
+
             listDiv.appendChild(div);
         });
     }
     dayDetailModal.style.display = "block";
 }
 
-// Formulier Activiteit opslaan
+// Formulier Activiteit toevoegen
 document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('eventTitle').value;
@@ -172,23 +180,43 @@ document.getElementById('eventForm').addEventListener('submit', async (e) => {
     document.getElementById('eventForm').reset();
 });
 
-// Formulier Persoon opslaan
+// Formulier Activiteit bewerken
+document.getElementById('editEventForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('editEventId').value;
+    const title = document.getElementById('editEventTitle').value;
+    const date = document.getElementById('editEventDate').value;
+    const startTime = document.getElementById('editEventStartTime').value;
+    const endTime = document.getElementById('editEventEndTime').value;
+    const user = document.getElementById('editEventUser').value;
+
+    await updateDoc(doc(db, "events", id), { title, date, startTime, endTime, user });
+    dayDetailModal.style.display = "none";
+});
+
+// Knop Activiteit verwijderen
+document.getElementById('btnDeleteEvent').onclick = async () => {
+    const id = document.getElementById('editEventId').value;
+    if (confirm("Weet je zeker dat je deze activiteit wilt verwijderen?")) {
+        await deleteDoc(doc(db, "events", id));
+        dayDetailModal.style.display = "none";
+    }
+};
+
+// Formulier Persoon toevoegen
 document.getElementById('userForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('newUserName').value;
     const color = document.getElementById('newUserColor').value;
-
     await addDoc(collection(db, "users"), { name, color });
     document.getElementById('userForm').reset();
 });
 
-// Navigatie & Modal triggers
+// Knoppen en Sluiten
 document.getElementById('prevWeek').onclick = () => { currentStartDate.setDate(currentStartDate.getDate() - 7); renderWeek(); };
 document.getElementById('nextWeek').onclick = () => { currentStartDate.setDate(currentStartDate.getDate() + 7); renderWeek(); };
-
 document.getElementById('openModalBtn').onclick = () => eventModal.style.display = "block";
 document.getElementById('openSettingsBtn').onclick = () => settingsModal.style.display = "block";
-
 document.getElementById('closeEventModal').onclick = () => eventModal.style.display = "none";
 document.getElementById('closeDetailModal').onclick = () => dayDetailModal.style.display = "none";
 document.getElementById('closeSettingsModal').onclick = () => settingsModal.style.display = "none";
