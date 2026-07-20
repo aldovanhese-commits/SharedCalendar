@@ -109,8 +109,8 @@ function renderWeek() {
 
             const eventEl = document.createElement('div');
             eventEl.className = 'event';
-            eventEl.style.backgroundColor = userColor;
-            eventEl.innerHTML = `<span><strong>${e.startTime} - ${e.endTime}</strong> ${e.title}</span>`;
+            eventEl.style.borderLeftColor = userColor;
+            eventEl.innerHTML = `<span><strong>${e.startTime} - ${e.endTime}</strong> ${e.title}</span> <small style="color:#6c757d">${e.user}</small>`;
             dayCard.appendChild(eventEl);
         });
 
@@ -134,7 +134,7 @@ function openDayDetail(dateString, fullDayTitle) {
     const dayEvents = allEvents.filter(e => e.date === dateString);
 
     if (dayEvents.length === 0) {
-        listDiv.innerHTML = '<p style="color:#8e8e93; text-align:center;">Geen activiteiten gepland.</p>';
+        listDiv.innerHTML = '<p style="color:#6c757d; text-align:center; font-size:0.9rem;">Geen activiteiten gepland.</p>';
     } else {
         dayEvents.forEach(e => {
             const userObj = allUsers.find(u => u.name === e.user);
@@ -142,11 +142,11 @@ function openDayDetail(dateString, fullDayTitle) {
 
             const div = document.createElement('div');
             div.className = 'detail-event-item';
-            div.style.backgroundColor = userColor;
+            div.style.borderLeftColor = userColor;
             div.innerHTML = `
-                <div style="font-size:0.85rem; opacity:0.9;">${e.user}</div>
-                <div style="font-weight:bold; font-size:1.1rem; margin:2px 0;">${e.startTime} - ${e.endTime}</div>
-                <div>${e.title}</div>
+                <div style="font-size:0.75rem; color:#6c757d; font-weight:600; text-transform:uppercase;">${e.user}</div>
+                <div style="font-weight:600; font-size:1rem;">${e.startTime} - ${e.endTime}</div>
+                <div style="color:#495057;">${e.title}</div>
             `;
             
             div.onclick = () => {
@@ -166,16 +166,26 @@ function openDayDetail(dateString, fullDayTitle) {
     dayDetailModal.style.display = "block";
 }
 
-// Formulier Activiteit toevoegen
+// Formulier Activiteit toevoegen (Met Multi-dag ondersteuning)
 document.getElementById('eventForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('eventTitle').value;
-    const date = document.getElementById('eventDate').value;
+    const startDateStr = document.getElementById('eventStartDate').value;
+    const endDateStr = document.getElementById('eventEndDate').value;
     const startTime = document.getElementById('eventStartTime').value;
     const endTime = document.getElementById('eventEndTime').value;
     const user = document.getElementById('eventUser').value;
 
-    await addDoc(collection(db, "events"), { title, date, startTime, endTime, user });
+    let start = new Date(startDateStr);
+    let end = new Date(endDateStr);
+
+    // Loop door alle dagen van start tot eind en voeg ze toe
+    while (start <= end) {
+        const dateStr = start.toISOString().split('T')[0];
+        await addDoc(collection(db, "events"), { title, date: dateStr, startTime, endTime, user });
+        start.setDate(start.getDate() + 1);
+    }
+
     eventModal.style.display = "none";
     document.getElementById('eventForm').reset();
 });
