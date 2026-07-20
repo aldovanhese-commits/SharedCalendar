@@ -32,11 +32,17 @@
                 <form id="eventForm">
                     <div class="input-group">
                         <label>Wat gaan we doen?</label>
-                        <input type="text" id="eventTitle" placeholder="Bv. Gaan eten, Cinema..." required>
+                        <input type="text" id="eventTitle" placeholder="Bv. Gaan eten, Cinema, Kamp..." required>
                     </div>
-                    <div class="input-group">
-                        <label>Datum</label>
-                        <input type="date" id="eventDate" required>
+                    <div class="time-row">
+                        <div class="input-group">
+                            <label>Begindatum</label>
+                            <input type="date" id="eventStartDate" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Einddatum</label>
+                            <input type="date" id="eventEndDate" required>
+                        </div>
                     </div>
                     <div class="time-row">
                         <div class="input-group">
@@ -50,8 +56,7 @@
                     </div>
                     <div class="input-group">
                         <label>Wie?</label>
-                        <select id="eventUser" required>
-                            </select>
+                        <select id="eventUser" required></select>
                     </div>
                     <button type="submit" class="btn-submit">Toevoegen</button>
                 </form>
@@ -65,7 +70,7 @@
                 
                 <div id="dayEventsList"></div>
 
-                <div id="editEventSection" style="display: none; border-top: 2px solid #e5e5ea; margin-top: 15px; padding-top: 15px;">
+                <div id="editEventSection" style="display: none; border-top: 1px solid #e9ecef; margin-top: 20px; padding-top: 20px;">
                     <h3>Activiteit aanpassen</h3>
                     <form id="editEventForm">
                         <input type="hidden" id="editEventId">
@@ -89,8 +94,7 @@
                         </div>
                         <div class="input-group">
                             <label>Wie?</label>
-                            <select id="editEventUser" required>
-                                </select>
+                            <select id="editEventUser" required></select>
                         </div>
                         <button type="submit" class="btn-submit">Wijzigingen Opslaan</button>
                         <button type="button" id="btnDeleteEvent" class="btn-delete-action">Verwijder Activiteit</button>
@@ -107,11 +111,11 @@
                     <input type="text" id="newUserName" placeholder="Naam (bv. Marie, Thomas)" required>
                     <div class="color-picker-wrapper">
                         <label>Kies een kleur:</label>
-                        <input type="color" id="newUserColor" value="#0071e3">
+                        <input type="color" id="newUserColor" value="#007aff">
                     </div>
                     <button type="submit" class="btn-submit">Persoon Toevoegen</button>
                 </form>
-                <h3>Huidige personen:</h3>
+                <h3 style="margin-top: 24px;">Huidige personen:</h3>
                 <div id="usersList"></div>
             </div>
         </div>
